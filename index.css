@@ -1,0 +1,19 @@
+body {
+    /* background-color: black; */
+    /* color: lightgreen;    */
+    font-size: medium;
+}
+
+td, th{
+    border: 1px solid black;
+    padding: 5px;     
+}
+
+/* th {
+    border: 1px solid black;
+    padding: 5px;     
+} */
+/* 
+a {
+    
+} */
