@@ -9,11 +9,7 @@ td, th{
     padding: 5px;     
 }
 
-/* th {
-    border: 1px solid black;
-    padding: 5px;     
-} */
-/* 
-a {
-    
-} */
+.na {
+    border: 0px;
+    color: white;
+}
