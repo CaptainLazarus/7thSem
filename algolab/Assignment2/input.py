@@ -1,5 +1,9 @@
 import random
+import cv2
+import sys
 import json
+from math import isinf
+import matplotlib.pyplot as plt
 
 f = open('Input' , 'w')
 
