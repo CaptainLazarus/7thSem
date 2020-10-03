@@ -11,9 +11,9 @@ T = []
 
 for t in range(1):
     L = []
-    for i in range(7):
-        x,y = random.randint(0,100),random.randint(0,100)
-        x1,y1 = random.randint(0,100),random.randint(0,100)
+    for i in range(50):
+        x,y = random.randint(0,1000),random.randint(0,1000)
+        x1,y1 = random.randint(0,1000),random.randint(0,1000)
         L.append([(x,y) , (x1,y1)])
     T.append(L)
 

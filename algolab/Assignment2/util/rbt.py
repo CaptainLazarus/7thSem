@@ -2,6 +2,9 @@ import cv2
 import sys
 import json
 from math import isinf
+from util.Util import ccw
+from util.Point import *
+from util.Line import *
 import matplotlib.pyplot as plt
 
 # Node for Tree
@@ -35,7 +38,7 @@ class RedBlackTree():
     def in_order_helper(self, node):
         if node != self.TNULL:
             self.in_order_helper(node.left)
-            sys.stdout.write(str(node.data) + " ")
+            sys.stdout.write(str(node.data) + "\n")
             self.in_order_helper(node.right)
 
     # Postorder
@@ -44,16 +47,6 @@ class RedBlackTree():
             self.post_order_helper(node.left)
             self.post_order_helper(node.right)
             sys.stdout.write(node.data + " ")
-
-    # Search the tree
-    def search_tree_helper(self, node, key):
-        # print("Key: {}".format(key))
-        if node == self.TNULL or key == node.data:
-            return node
-
-        if key.l.y < node.data.l.y:
-            return self.search_tree_helper(node.left, key)
-        return self.search_tree_helper(node.right, key)
 
     # Balancing the tree after deletion
     def delete_fix(self, x):
@@ -116,16 +109,25 @@ class RedBlackTree():
         v.parent = u.parent
 
     # Node deletion
-    def delete_node_helper(self, node, key):
+    def delete_node_helper(self, node, line , key):
         z = self.TNULL
         while node != self.TNULL:
-            if node.data == key:
+            if node.data == line:
                 z = node
+                break
 
-            if node.data.l.y <= key.l.y:
-                node = node.right
-            else:
+            result = node.data.m * key.x + node.data.c
+            diff = round(result - key.y , 4)
+
+            if diff > 0:
                 node = node.left
+            elif diff < 0:
+                node = node.right
+            elif diff == 0:
+                if ccw(line.l , key , node.data.l) == -1:
+                    node = node.left
+                else:
+                    node = node.right                    
 
         if z == self.TNULL:
             print("Cannot find key in the tree")
@@ -198,10 +200,10 @@ class RedBlackTree():
         if node != self.TNULL:
             sys.stdout.write(indent)
             if last:
-                sys.stdout.write("R----")
+                sys.stdout.write("U----")
                 indent += "     "
             else:
-                sys.stdout.write("L----")
+                sys.stdout.write("B----")
                 indent += "|    "
 
             s_color = "RED" if node.color == 1 else "BLACK"
@@ -218,8 +220,33 @@ class RedBlackTree():
     def postorder(self):
         self.post_order_helper(self.root)
 
-    def searchTree(self, k):
-        return self.search_tree_helper(self.root, k)
+    # Search the tree
+    def search_tree_helper(self, node, line , key):
+        if line == node.data:
+            return node
+
+        # if node == self.TNULL:
+        #     return node.parent
+
+        result = node.data.m * key.x + node.data.c
+        # result2 = key.m * x + key.c
+        # diff = (round(result , 4) - round(result2 , 4))
+        diff = round(result - key.y , 4)
+
+
+        if diff > 0:
+            return self.search_tree_helper(node.left, line , key)
+        elif diff < 0:
+            return self.search_tree_helper(node.right, line , key)
+        elif diff == 0:
+            if ccw(line.l , key , node.data.l) == -1:
+                return self.search_tree_helper(node.left , line , key)
+            else:
+                return self.search_tree_helper(node.right , line , key)
+
+    def searchTree(self, L , P):
+        # print(type(e))
+        return self.search_tree_helper(self.root, L , P)
 
     def minimum(self, node):
         while node.left != self.TNULL:
@@ -294,10 +321,9 @@ class RedBlackTree():
 
     # Key -> (Line , X = K -> For sorting)
     # Insert accordingly. VERY IMP
-    def insert(self, key , LS):
-        node = Node(LS)
+    def insert(self, line , key):
+        node = Node(line)
         node.parent = None
-        node.data = LS
         node.left = self.TNULL
         node.right = self.TNULL
         node.color = 1
@@ -305,24 +331,47 @@ class RedBlackTree():
         y = None
         x = self.root
 
+        # Heres how you're inserting. 
+        # Find intersection of line and all nodes.
+        # Binary search tree according to that.
+        # If equal, implies intersection point. 
+        # At this point, check the x axis of the line and the node.
+        # The one with nearer x axis is assumed to be the one above,
+
         while x != self.TNULL:
             y = x
+            
             result = (x.data.m * key.x) + x.data.c
-            if key.y < result:
+            diff = round(result - key.y , 4)
+
+            # Might have error
+            if diff > 0:
                 x = x.left
-            else:
+            elif diff < 0:
                 x = x.right
+            elif diff == 0:
+                if ccw(node.data.l , key , x.data.l) == -1:
+                    x = x.left
+                else:
+                    x = x.right
 
         node.parent = y
+
         if y is not None:
             result = (y.data.m * key.x) + y.data.c
-        
+            diff = round(result - key.y , 4)            
+
         if y == None:
             self.root = node
-        elif key.y < result:
+        elif diff > 0:
             y.left = node
-        else:
+        elif diff < 0:
             y.right = node
+        elif diff == 0:
+            if node.data.l.y < y.data.l.y:
+                y.left = node
+            else:
+                y.right = node
 
         if node.parent == None:
             node.color = 0
@@ -333,9 +382,9 @@ class RedBlackTree():
 
         self.fix_insert(node)
 
-    def swap_helper(self , node , key1 , key2):
-        a = self.searchTree(key1)
-        b = self.searchTree(key2)
+    def swap_helper(self , node , line1 , line2 , key):
+        a = self.searchTree(line1 , key)
+        b = self.searchTree(line2 , key)
 
         a.data , b.data = b.data , a.data
 
@@ -344,17 +393,16 @@ class RedBlackTree():
         self.root = a
         return self.root
 
-
-    def swap(self , key1 , key2):
-        self.root = self.swap_helper(self.root , key1 , key2)
+    def swap(self , line1 , line2 , key):
+        self.root = self.swap_helper(self.root , line1 , line2 , key)
         return self.root
 
     def get_root(self):
         return self.root
 
-    def delete_node(self, item):
-        self.delete_node_helper(self.root, item)
+    def delete_node(self, line , key):
+        self.delete_node_helper(self.root, line , key)
 
     def print_tree(self):
-        print(self.root)
+        # print(self.root)
         self.__print_helper(self.root, "", True)

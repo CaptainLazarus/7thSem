@@ -3,10 +3,10 @@ import sys
 import json
 from math import isinf
 import matplotlib.pyplot as plt
+import matplotlib.ticker as plticker
 from util.Point import *
-# import util.Point
 from util.Line import *
-from util.rbt import *
+# from util.rbt import *
 
 
 # Debug function for lists
@@ -18,6 +18,7 @@ def show(L: list):
 
 # Plotting points and line
 def plot(lines , points=None):
+    fig, ax = plt.subplots()
     for i in lines:
         lx = [i.l.x]
         ly = [i.l.y]
@@ -31,9 +32,35 @@ def plot(lines , points=None):
             x = [i.x]
             y = [i.y]
             plt.scatter(x,y, c='r', label="Left Points")
-
+    # loc = plticker.MultipleLocator(base=1.0)
+    # ax.xaxis.set_major_locator(loc)
+    # ax.yaxis.set_major_locator(loc)
     # plt.legend(loc='upper left')
     plt.show()
+
+def plotInt(lines , x , points=None):
+    fig, ax = plt.subplots()
+    plt.plot([x , x] , [0 , 10] , linestyle = ':' , color='r')
+    
+    for i in lines:
+        lx = [i.l.x]
+        ly = [i.l.y]
+        plt.scatter(lx,ly, c='b', label="Left Points")
+        rx = [i.r.x]
+        ry = [i.r.y]
+        plt.scatter(rx,ry, c='g', label="Right Points")
+        plt.plot([i.l.x , i.r.x] , [i.l.y , i.r.y] , 'k')
+    if points is not None:
+        for i in points:
+            x = [i.x]
+            y = [i.y]
+            plt.scatter(x,y, c='r', label="Left Points")
+    loc = plticker.MultipleLocator(base=1.0)
+    ax.xaxis.set_major_locator(loc)
+    ax.yaxis.set_major_locator(loc)
+    # plt.legend(loc='upper left')
+    plt.show()
+
 
 # Get Input from Input File
 def getInput():
@@ -112,6 +139,8 @@ def intersection(L1, L2):
     if D != 0:
         x = Dx / D
         y = Dy / D
+        # x = round(x , 4)
+        # y = round(y , 4)
         return Point([x,y])
     else:
         return False
