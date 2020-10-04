@@ -38,9 +38,9 @@ def plot(lines , points=None):
     # plt.legend(loc='upper left')
     plt.show()
 
-def plotInt(lines , x , points=None):
+def plotInt(lines , x , maxy=10 , miny=0 , points=None):
     fig, ax = plt.subplots()
-    plt.plot([x , x] , [0 , 10] , linestyle = ':' , color='r')
+    plt.plot([x , x] , [miny , maxy] , linestyle = ':' , color='r')
     
     for i in lines:
         lx = [i.l.x]

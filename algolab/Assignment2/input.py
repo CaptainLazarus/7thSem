@@ -1,22 +1,30 @@
 import random
 import cv2
-import sys
 import json
-from math import isinf
-import matplotlib.pyplot as plt
+import argparse
 
-f = open('Input' , 'w')
+def input():
+    parse = argparse.ArgumentParser(description='Input for program')
+    parse.add_argument('-t' , type=int , help='Number of test cases')
+    parse.add_argument('-n' , type=int , help='Number of line segments')
+    parse.add_argument('-r' , type=int , help='Range of point')
+    return parse.parse_args()
 
-T = []
+def generateInput(t , n , r):
+    f = open('Input' , 'w')
+    T = []
+    for _ in range(t):
+        L = []
+        for _ in range(n):
+            x,y = random.randint(0,r),random.randint(0,r)
+            x1,y1 = random.randint(0,r),random.randint(0,r)
+            L.append([(x,y) , (x1,y1)])
+        T.append(L)
 
-for t in range(1):
-    L = []
-    for i in range(50):
-        x,y = random.randint(0,1000),random.randint(0,1000)
-        x1,y1 = random.randint(0,1000),random.randint(0,1000)
-        L.append([(x,y) , (x1,y1)])
-    T.append(L)
+    json.dump(T , f)
+    f.close()
 
-json.dump(T , f)
 
-f.close()
+print("\n[INFO] --- Generating Input\n")
+inp = input()
+generateInput(inp.t , inp.n , inp.r)
