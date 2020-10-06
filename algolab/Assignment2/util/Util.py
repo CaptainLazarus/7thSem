@@ -55,12 +55,11 @@ def plotInt(lines , x , maxy=10 , miny=0 , points=None):
             x = [i.x]
             y = [i.y]
             plt.scatter(x,y, c='r', label="Left Points")
-    loc = plticker.MultipleLocator(base=1.0)
-    ax.xaxis.set_major_locator(loc)
-    ax.yaxis.set_major_locator(loc)
+    # loc = plticker.MultipleLocator(base=1.0)
+    # ax.xaxis.set_major_locator(loc)
+    # ax.yaxis.set_major_locator(loc)
     # plt.legend(loc='upper left')
     plt.show()
-
 
 # Get Input from Input File
 def getInput():

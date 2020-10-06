@@ -1,4 +1,4 @@
-## Assignment 2
+## **Assignment 2**
 
 Has multiple external libraries. Please install before running.
 
@@ -6,10 +6,12 @@ Has multiple external libraries. Please install before running.
 python3 main.py
 ```
 
-### Output 1
+### **How it works**
 
-![Output 1](./out1.png) 
+#### *Output 1*
 
-### Output 2
+![Output 1](./Output/out4.png) 
 
-![Output 2](./out2.png) 
+#### *Output 2*
+
+![Output 2](./Output/out1.png) 

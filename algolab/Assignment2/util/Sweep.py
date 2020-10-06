@@ -159,7 +159,7 @@ def sweep(L):
 
                 T.swap(c1.data , c2.data , N[0])            
             
-            plotInt(L , N[0].x , maxy , miny , Out)
+            # plotInt(L , N[0].x , maxy , miny , Out)
             # print(N[0])
             # T.inorder()
             # print('\n\n\n')
