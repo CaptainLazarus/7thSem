@@ -1,6 +1,7 @@
 import cv2
 import sys
 import json
+import time
 from math import isinf
 import matplotlib.pyplot as plt
 from util.Util import *
@@ -17,6 +18,8 @@ if __name__ == "__main__":
     print("\n[INFO] --- Getting Input\n")
     T = getInput()
 
+    Time = []
+
     # ith Test case
     for i in range(len(T)):
 
@@ -27,8 +30,12 @@ if __name__ == "__main__":
         plot(L)
 
         print("\n[INFO] --- Starting Sweep\n")
+        start_time = time.time()
         I = sweep(L)
+        time_taken = time.time() - start_time
+        Time.append(time_taken)
         # print(I)
 
         print("\n[INFO] --- Plotting Intersection Points\n")
         plot(L , I)
+        # plotTime()
