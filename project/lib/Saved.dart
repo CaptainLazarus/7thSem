@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/main.dart';
 import 'package:provider/provider.dart';
-import './db.dart';
+import 'src/db.dart';
 
 
 class SaveData extends StatefulWidget {
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<SaveData> {
 //          print(snapshot.data.length);
           if(snapshot.hasData) {
             if(snapshot.data.length == 0){
-              return Text("No Articles Found");
+              return Center(child: Text("No Articles Found"));
             }
             return listBuilder(snapshot.data);
           }

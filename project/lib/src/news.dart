@@ -20,4 +20,16 @@ class News{
 
     return response.articles;
   }
+
+  Future<List<Article>> getHeadlines(String count , String lang , int pSize) async {
+    ArticleResponse response = await newsApi.topHeadlines(
+      country: count,
+      language: lang,
+      pageSize: pSize,
+//      q: 'politics'
+    );
+
+    return response.articles;
+  }
+
 }

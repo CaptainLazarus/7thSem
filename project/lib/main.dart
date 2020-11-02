@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project/src/db.dart';
 import 'package:project/src/db_func.dart';
-import 'src/Home.dart';
-import 'src/Saved.dart';
+import 'Home.dart';
+import 'Saved.dart';
 import 'package:provider/provider.dart';
 import 'src/db_func.dart';
 

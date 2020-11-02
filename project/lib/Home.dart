@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project/main.dart';
 import 'package:project/src/db.dart';
-import 'package:project/src/db_func.dart';
 import 'package:project/src/news.dart';
 import 'package:newsapi/newsapi.dart';
+import 'package:project/src/watson.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'src/watson.dart';
 
 class Home extends StatefulWidget {
   const Home({Key key}) : super(key: key);
@@ -16,10 +20,13 @@ class Home extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<Home> {
+
+  Watson myWatson = new Watson();
   News news;
   Future<List<Article>> articles;
   int page;
   int flag;
+  var Response;
 
   MyDB mydb;
 
@@ -32,9 +39,18 @@ class _MyHomePageState extends State<Home> {
     refreshNews(page);
   }
 
+
+  _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   refreshNews(int x) {
     setState(() {
-      articles = news.getNews(x);
+      articles = news.getHeadlines('in', 'en', 5);
     });
   }
 
@@ -53,37 +69,75 @@ class _MyHomePageState extends State<Home> {
               key: UniqueKey(),
               child: Center(
                 child: Card(
-                  child: Column(
+                  child: ExpansionTile(
+                    key: PageStorageKey<String>(articles[index].title),
+                    leading: IconButton(
+                      highlightColor: Colors.blue,
+                      icon: Icon(
+                        Icons.save_alt,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        mydb.s(ArticleIndia(articles[index]));
+                      },
+                    ),
+                    title: Text(
+                      articles[index].title,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     children: <Widget>[
-                      ListTile(
-                        leading: IconButton(
-                          highlightColor: Colors.red,
-                            icon: Icon(
-                              Icons.save_alt,
-                              color: Colors.black,
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: RichText(
+                            text: TextSpan(
+                              text: articles[index].title,
+                              style: TextStyle(
+                                fontFamily: 'Garamond',
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold
+                              ),
                             ),
-                            onPressed: () {
-                                mydb.s(ArticleIndia(articles[index]));
-                            },
-                        ),
-                        title: Text(
-                          articles[index].title,
-                          overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                       Center(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(12.0),
                           child: RichText(
-                            maxLines: 2,
                             text: TextSpan(
                               text: articles[index].description,
                               style: DefaultTextStyle.of(context).style,
                             ),
-                            overflow: TextOverflow.fade,
                           ),
                         ),
                       ),
+                      ButtonBar(
+                        alignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          RaisedButton(
+                            child: Text('Analyse'),
+                            onPressed: () {
+                                myWatson.getResponse(articles[index].url).then((value) {
+                                  setState(() {
+                                    Response = jsonDecode(value);
+                                  });
+                                  for(var i=0 ; i<Response['entities'].length ; i+=1){
+                                    print(Response['entities'][i]);
+                                  }
+                                });
+
+                              },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.forward),
+                            onPressed: () {
+                              _launchURL(articles[index].url);
+                            },
+                          )
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -98,7 +152,7 @@ class _MyHomePageState extends State<Home> {
 //          print(snapshot.data);
           if (snapshot.hasData) {
             if (snapshot.data.length == 0) {
-              return Text("No articles Found");
+              return Center(child: Text("No articles Found"));
             }
             return listBuilder(snapshot.data);
           }
