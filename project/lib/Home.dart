@@ -27,7 +27,6 @@ class _MyHomePageState extends State<Home> {
   int page;
   int flag;
   var Response;
-
   MyDB mydb;
 
   void initState() {
@@ -50,7 +49,7 @@ class _MyHomePageState extends State<Home> {
 
   refreshNews(int x) {
     setState(() {
-      articles = news.getHeadlines('in', 'en', 5);
+      articles = news.getNews('India' , 'en', 20);
     });
   }
 
@@ -68,38 +67,29 @@ class _MyHomePageState extends State<Home> {
               },
               key: UniqueKey(),
               child: Center(
-                child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: ExpansionTile(
                     key: PageStorageKey<String>(articles[index].title),
                     leading: IconButton(
-                      highlightColor: Colors.blue,
+                      color: Colors.black,
+                      key: UniqueKey(),
                       icon: Icon(
                         Icons.save_alt,
-                        color: Colors.black,
                       ),
+
                       onPressed: () {
                         mydb.s(ArticleIndia(articles[index]));
                       },
                     ),
                     title: Text(
                       articles[index].title,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     children: <Widget>[
                       Center(
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: RichText(
-                            text: TextSpan(
-                              text: articles[index].title,
-                              style: TextStyle(
-                                fontFamily: 'Garamond',
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          ),
+                          padding: const EdgeInsets.fromLTRB(12.0 , 12 , 12 , 0),
+                          child: articles[index].urlToImage != null ? Image.network(articles[index].urlToImage) : Container(),
                         ),
                       ),
                       Center(
@@ -119,15 +109,16 @@ class _MyHomePageState extends State<Home> {
                           RaisedButton(
                             child: Text('Analyse'),
                             onPressed: () {
-                                myWatson.getResponse(articles[index].url).then((value) {
-                                  setState(() {
-                                    Response = jsonDecode(value);
-                                  });
-                                  for(var i=0 ; i<Response['entities'].length ; i+=1){
-                                    print(Response['entities'][i]);
-                                  }
-                                });
-
+//                                myWatson.getResponse(articles[index].url).then((value) {
+//                                  setState(() {
+//                                    Response = jsonDecode(value);
+//                                    String key = Response['keywords'][0]['text'];
+//                                    for(var i=1 ; i<Response['keywords'].length ; i+=1){
+//                                      key = key + ' AND ' + Response['keywords'][i]['text'];
+//                                      print(Response['keywords'][i]);
+//                                    }
+//                                  });
+//                                });
                               },
                           ),
                           IconButton(

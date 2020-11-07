@@ -8,6 +8,7 @@ import 'Home.dart';
 import 'Saved.dart';
 import 'package:provider/provider.dart';
 import 'src/db_func.dart';
+import 'Search.dart';
 
 void main() async{
   runApp(
@@ -70,13 +71,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   final PageStorageBucket bucket = PageStorageBucket();
-
 
   final List<Widget> pages = [
     Home(
       key: PageStorageKey('Home'),
+    ),
+    Search(
+      key: PageStorageKey('SearchPage'),
     ),
     SaveData(
       key: PageStorageKey('Saved'),
@@ -103,11 +106,15 @@ class _MyHomePageState extends State<MyHomePage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                title: Text('Home')
+                label: 'Home'
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.search),
+                label: 'Search'
             ),
             BottomNavigationBarItem(
                 icon: Icon(Icons.save_alt),
-                title: Text('Saved')
+                label: 'Saved'
             )
           ],
           currentIndex: _selectedIndex,

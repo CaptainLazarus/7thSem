@@ -19,6 +19,9 @@ class DBHelper{
   static const DB_NAME = 'subjects.db';
 
   Future<Database> get db async {
+//    var databasesPath = await getDatabasesPath();
+//    String path = join(databasesPath, 'subjects.db');
+//    deleteDatabase(path);
     if(_db != null) {
       return _db;
     }
@@ -34,7 +37,7 @@ class DBHelper{
   }
 
   _onCreate(Database db , int version) async {
-    await db.execute("CREATE TABLE  $TABLE ($id INTEGER PRIMARY KEY , $title TEXT , $content TEXT , $source TEXT , $url TEXT , $urlToImage TEXT)");
+    await db.execute("CREATE TABLE  $TABLE ($id INTEGER  PRIMARY KEY , $title TEXT, $content TEXT , $source TEXT , $url TEXT , $urlToImage TEXT)");
   }
 
   Future<ArticleIndia> save(ArticleIndia article) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/main.dart';
 import 'package:provider/provider.dart';
 import 'src/db.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class SaveData extends StatefulWidget {
@@ -15,14 +16,19 @@ class SaveData extends StatefulWidget {
 
 class _MyHomePageState extends State<SaveData> {
 
-//  var cartModel = somehowGetMyCartModel(context);
-//  Future<List<ArticleIndia>> items;
-
   MyDB mydb = MyDB();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   ListView listBuilder(List<ArticleIndia> articles) {
@@ -37,25 +43,58 @@ class _MyHomePageState extends State<SaveData> {
             },
             key: UniqueKey(),
             child: Center(
-                child: InkWell(
-                  onTap: (){
-                    print(articles[index].id.toString() + '\t' + index.toString());
-                  },
-                  child: Card(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          ListTile(
-                              title: Text(
-                                  articles[index].title,
-                                  overflow: TextOverflow.ellipsis,
-                              ),
-                          ),
-                        ],
-                      )
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ExpansionTile(
+                  key: PageStorageKey<String>(articles[index].title),
+                  leading: IconButton(
+                    icon: Icon(Icons.forward),
+                    onPressed: () {
+                      _launchURL(articles[index].url);
+                    },
                   ),
-                )
-            ),
+                  title: Text(
+                    articles[index].title,
+//                    overflow: TextOverflow.ellipsis,
+                  ),
+                  children: <Widget>[
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12.0 , 12 , 12 , 0),
+                        child: articles[index].urlToImage != null ? Image.network(articles[index].urlToImage) : Container(),
+                      ),
+                    ),
+//                    Center(
+//                      child: Padding(
+//                        padding: const EdgeInsets.all(12.0),
+//                        child: RichText(
+//                          text: TextSpan(
+//                            text: articles[index].title,
+//                            style: TextStyle(
+//                                fontFamily: 'Garamond',
+//                                fontSize: 16,
+//                                color: Colors.black,
+//                                fontWeight: FontWeight.bold
+//                            ),
+//                          ),
+//                        ),
+//                      ),
+//                    ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: RichText(
+                          text: TextSpan(
+                            text: articles[index].content,
+                            style: DefaultTextStyle.of(context).style,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
           );
         }
     );

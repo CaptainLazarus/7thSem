@@ -10,12 +10,12 @@ class News{
     );
   }
 
-  Future<List<Article>> getNews(int pageNo) async {
+  Future<List<Article>> getNews(String Q , String lang , int pageSize) async {
     ArticleResponse response = await newsApi.everything(
-      q: 'hathras',
-      language: 'en',
-//      pageSize: 100,
-//      page: pageNo
+      q: Q,
+      language: lang,
+      sources: "fox-news , cnn" ,
+      pageSize: pageSize
     );
 
     return response.articles;
@@ -23,10 +23,10 @@ class News{
 
   Future<List<Article>> getHeadlines(String count , String lang , int pSize) async {
     ArticleResponse response = await newsApi.topHeadlines(
-      country: count,
+//      category: 'general',
+      country: 'in',
       language: lang,
       pageSize: pSize,
-//      q: 'politics'
     );
 
     return response.articles;

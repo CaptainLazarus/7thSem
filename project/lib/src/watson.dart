@@ -8,7 +8,7 @@ class Watson {
   String apiKey = 'WB3mJb6FMOhv-JZXkJ9wD1admOJcmXeyy5wvxt0bZUvI';
   String url = "https://api.jp-tok.natural-language-understanding.watson.cloud.ibm.com/instances/974c600d-8bf1-4a35-9c2f-777bb37a0bb3/v1/analyze?version=2019-07-12";
 
-  Future<dynamic> getResponse(String URL) async{
+  Future<dynamic> getResponse(String URL , List<String> target) async{
     String basicAuth = 'Basic ' + base64Encode(utf8.encode('apikey:'+apiKey));
 
     Map<String, String> requestHeaders = {
@@ -16,12 +16,21 @@ class Watson {
       'authorization': basicAuth
     };
 
+
+    String temp = "\"" + target[0] + "\"";
+    for (int i = 1; i < target.length; i++) {
+      temp = temp + " , \"" +  target[i] + "\"";
+    }
+
+//    print(temp);
+
     String _body = '''{
         "url": \"$URL\",
         "features": {
-          "entities": {
-            "sentiment": true,
-            "limit": 4
+          "sentiment": {
+            "targets": [
+              $temp
+            ]
           }
         }
     }''';
